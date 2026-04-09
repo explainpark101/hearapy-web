@@ -477,6 +477,17 @@ export default function App() {
               </a>
               )는 Samsung 및 원 저작자와 어떠한 법적 관련도 없음을 명시합니다.
             </p>
+            <p>
+              <a 
+                href="https://github.com/explainpark101/hearapy-web" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                <Github className="w-4 h-4 shrink-0" />
+                GitHub: Repository URL
+              </a>
+            </p>
             <a 
               href="https://play.google.com/store/apps/details?id=com.samsung.a100hz&hl=ko" 
               target="_blank" 
@@ -486,6 +497,7 @@ export default function App() {
               <ExternalLink className="w-4 h-4 shrink-0" />
               Google Play Store: 공식 Hearapy 앱 다운로드 (Android 한정)
             </a>
+            
           </div>
         </main>
       )}
