@@ -250,9 +250,10 @@ export default function App() {
       gainNodeRef.current.gain.linearRampToValueAtTime(0, now + 1);
     }
 
-    // 무음 오디오 및 미디어 세션 정리
+    // 무음 오디오 및 미디어 세션 정리 (일시정지 및 초기화)
     if (silentAudioRef.current) {
       silentAudioRef.current.pause();
+      silentAudioRef.current.currentTime = 0; // 재생 위치 초기화 추가
     }
     if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = 'none';
