@@ -38,4 +38,4 @@ npm run build
 
 # Reference
 참고 문헌
-https://pmc.ncbi.nlm.nih.gov/articles/PMC11955832/
+https://doi.org/10.1265/ehpm.24-00247
