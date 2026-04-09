@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://hearapy-web.onrender.com/</loc>
+    <!-- 사이트의 마지막 수정일을 입력합니다. (YYYY-MM-DD 포맷) -->
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <!-- 단일 페이지 앱이므로 중요도를 가장 높게(1.0) 설정합니다. -->
+    <priority>1.0</priority>
+  </url>
+</urlset>
