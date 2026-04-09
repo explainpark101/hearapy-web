@@ -127,10 +127,12 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeLeft, setTimeLeft] = useState(duration);
 
-  // Web Audio API 객체 보존용 Refs
+  // Web Audio API 및 타이머 Refs
   const audioCtxRef = useRef(null);
   const oscillatorRef = useRef(null);
   const gainNodeRef = useRef(null);
+  const silentAudioRef = useRef(null);
+  const endTimeRef = useRef(null); // 백그라운드 스로틀링 방지용 절대 시간
 
   // duration 변경 시 timeLeft 동기화
   useEffect(() => {
@@ -146,20 +148,25 @@ export default function App() {
     return `${m}:${s}`;
   };
 
-  // 타이머 로직
+  // 타이머 로직 (절대 시간 기반 계산으로 백그라운드 지연 방지)
   useEffect(() => {
     let interval = null;
-    if (isPlaying && timeLeft > 0) {
+    if (isPlaying && endTimeRef.current) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isPlaying && timeLeft === 0) {
-      stopTherapy();
+        const now = Date.now();
+        const remaining = Math.max(0, Math.round((endTimeRef.current - now) / 1000));
+        
+        setTimeLeft(remaining);
+        
+        if (remaining <= 0) {
+          stopTherapy();
+        }
+      }, 500); // UI 갱신을 위해 0.5초마다 검사
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isPlaying, timeLeft]);
+  }, [isPlaying]);
 
   // 컴포넌트 언마운트 시 오디오 정리
   useEffect(() => {
@@ -180,6 +187,7 @@ export default function App() {
   const startTherapy = () => {
     if (isPlaying) return;
 
+    // 1. AudioContext 초기화
     if (!audioCtxRef.current) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtxRef.current = new AudioContext();
@@ -188,6 +196,25 @@ export default function App() {
       audioCtxRef.current.resume();
     }
 
+    // 2. 모바일 백그라운드 유지를 위한 무음 오디오 재생 (Trick)
+    if (silentAudioRef.current) {
+      silentAudioRef.current.play().catch(e => console.log('Silent audio playback blocked:', e));
+    }
+
+    // 3. 미디어 세션 API 설정 (잠금화면 컨트롤 및 백그라운드 유지 보조)
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = 'playing';
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: '100Hz 안정화 테라피',
+        artist: 'Hearapy',
+        album: '멀미 완화'
+      });
+      // Media Session의 정지 버튼 동작 맵핑
+      navigator.mediaSession.setActionHandler('pause', stopTherapy);
+      navigator.mediaSession.setActionHandler('stop', stopTherapy);
+    }
+
+    // 4. 오실레이터 생성 및 연결
     const osc = audioCtxRef.current.createOscillator();
     const gain = audioCtxRef.current.createGain();
 
@@ -197,6 +224,7 @@ export default function App() {
     osc.connect(gain);
     gain.connect(audioCtxRef.current.destination);
 
+    // 부드러운 페이드인
     const now = audioCtxRef.current.currentTime;
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(0.8, now + 1);
@@ -206,6 +234,8 @@ export default function App() {
     oscillatorRef.current = osc;
     gainNodeRef.current = gain;
 
+    // 5. 절대 목표 시간 설정 후 상태 업데이트
+    endTimeRef.current = Date.now() + duration * 1000;
     setIsPlaying(true);
     setTimeLeft(duration);
   };
@@ -213,10 +243,19 @@ export default function App() {
   const stopTherapy = () => {
     if (!isPlaying) return;
 
+    // 페이드 아웃
     if (gainNodeRef.current && audioCtxRef.current) {
       const now = audioCtxRef.current.currentTime;
       gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, now);
       gainNodeRef.current.gain.linearRampToValueAtTime(0, now + 1);
+    }
+
+    // 무음 오디오 및 미디어 세션 정리
+    if (silentAudioRef.current) {
+      silentAudioRef.current.pause();
+    }
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = 'none';
     }
 
     setTimeout(() => {
@@ -231,16 +270,26 @@ export default function App() {
       }
       setIsPlaying(false);
       setTimeLeft(duration);
+      endTimeRef.current = null;
     }, 1000);
   };
 
   const handleOpenSettings = () => {
-    // 설정 페이지 진입 시에도 재생 중인 소리가 멈추지 않도록 수정
     setCurrentView('settings');
   };
 
   return (
     <div className="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans selection:bg-blue-500/30">
+      {/* 백그라운드 오디오 세션 유지를 위한 무음(base64) 오디오 태그 */}
+      {/* 아주 짧은 빈 WAV 데이터입니다. */}
+      <audio 
+        ref={silentAudioRef} 
+        loop 
+        playsInline 
+        src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" 
+        className="hidden"
+      />
+
       {/* 커스텀 애니메이션 및 스크롤바 숨김 스타일 */}
       <style>
         {`
