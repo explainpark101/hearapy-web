@@ -1,16 +1,41 @@
-# React + Vite
+# Hearapy Web (비공식 웹 버전)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+100Hz 저주파 순음을 발생시켜 멀미 완화에 도움을 주는 테라피 웹 애플리케이션입니다. 삼성(Samsung)의 원본 Hearapy 앱의 연구 배경과 동작 원리를 참고하여 Web Audio API를 통해 웹 브라우저에서 바로 작동하도록 구현되었습니다.
 
-Currently, two official plugins are available:
+## 빌드 및 실행 방법 (Vite)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+이 프로젝트는 Vite를 기반으로 작성되었습니다. 터미널(zsh 등)에서 아래의 명령어를 통해 직접 빌드하고 실행할 수 있습니다.
 
-## React Compiler
+- 의존성 패키지 설치
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+npm install
 
-## Expanding the ESLint configuration
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 로컬 개발 서버 실행
+
+```
+npm run dev
+
+```
+
+- 배포용 정적 파일 빌드
+
+```
+npm run build
+
+```
+
+명령어 실행 후 생성되는 `dist` 디렉토리의 결과물을 렌더(Render), 버셀(Vercel) 등의 정적 호스팅 서비스에 배포할 수 있습니다.
+
+## 지적재산권 및 상표권 안내
+
+- 'Hearapy'는 Samsung의 등록 상표입니다.
+- 본 저장소 및 웹 애플리케이션은 원작의 동작을 웹에서 구현해 본 비공식 개인 프로젝트입니다.
+- 본 프로젝트의 제작자(github:explainpark101)는 Samsung 및 해당 상표권자와 어떠한 상업적, 법적 관련성도 없음을 명확히 밝힙니다.
+- 앱의 명칭, 아이디어, 관련 연구 결과 등에 대한 모든 지적재산권 및 상표권은 원 저작자에게 귀속됩니다.
+
+# Reference
+참고 문헌
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11955832/
