@@ -408,7 +408,7 @@ export default function App() {
 
           {/* 헤더 섹션 */}
           <div className="text-center mb-10 w-full">
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Hearapy</h1>
+            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Hearapy Web</h1>
             <p className="text-slate-400 text-sm">100Hz 전정 기관 안정화 테라피</p>
           </div>
 
